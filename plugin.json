@@ -1,10 +1,9 @@
 {
-    "name": "My plugin",
+    "name": "Cas Number Info",
     "version": "0.0.1",
-    "description": "Description of my_plugin.",
-    "author_name": "Me",
-    "author_url": "https://mywebsite.me",
-    "plugin_url": "https://github.com/my_name/my_plugin",
-    "tags": "cat, template, example",
-    "thumb": "https://raw.githubusercontent.com/my_repo_path/my_plugin.png"
+    "description": "Get chemical properties from a reliable source. Example: CAS nuber 78-70-6",
+    "author_name": "flashmood69 AKA miken175",
+    "author_url": "",
+    "plugin_url": "https://github.com/flashmood69/cas_number_info.git",
+    "tags": "cas, chemical"
 }
