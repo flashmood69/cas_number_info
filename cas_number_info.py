@@ -74,7 +74,7 @@ def cas_properties(cas, cat):
     search_str = "https://echa.europa.eu/en/brief-profile/-/briefprofile/"
 
     start = html.find(search_str)
-
+    
     if start > 0:
         finish = html.find("\"", start)
         if finish > 0:
@@ -88,14 +88,14 @@ def cas_properties(cas, cat):
             html = str(r.content).replace("\\n","").replace("\\r","").replace("\\t","").replace("b\'","").replace("\'","").replace("&#xb0;","").replace("&nbsp;"," ")
             html = re.sub(" +", " ", html).replace("> ",">").replace(" <","<")
 
-            results = ""
+            results = f"<a href='{search_str}{doc}'>{cas}</a>"
 
             for property in properties:
                 property['property_value'] = get_cas_property(html, property['property_search_string'])
                 if property['property_value'] == "" and  property['property_search_string_2'] != "":
                     property['property_value'] = get_cas_property(html, property['property_search_string_2'])
 
-                results += f"{property['property_name']}: {property['property_value']}\n"
+                results += f"\n{property['property_name']}: {property['property_value']}"
 
         return results
 
