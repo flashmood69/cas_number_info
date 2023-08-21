@@ -1,5 +1,6 @@
 # Cas Number Info
 ![ss](https://raw.githubusercontent.com/flashmood69/cas_number_info/main/cas_number_info.png)
+<br>
 This plugin allows you to get some information about chemical compounds from a reliable source, ECHA (European Chemicals Agency).
 
 For now it provides xlogP, vapor pressure, boiling point and viscosity.
