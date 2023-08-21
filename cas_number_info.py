@@ -83,7 +83,9 @@ def cas_properties(cas, cat):
 
     html = str(r.content)
 
+    # Search for the chemical name
     search_str = "https://echa.europa.eu/en/substance-information/-/substanceinfo/"
+
     start = html.find(search_str)
     if start > 0:
         start = html.find(">", start + 1)
@@ -109,7 +111,7 @@ def cas_properties(cas, cat):
 
             html = html_cleansing(str(r.content))
 
-            results = f"<a href='{search_str}{doc}'>{cas}</a>\nName: {cas_name}"
+            results = f"<a href='{search_str}{doc}' target='_blank'>{cas}</a>\nName: {cas_name}"
 
             for property in properties:
                 property['property_value'] = get_cas_property(html, property['property_search_string'])
