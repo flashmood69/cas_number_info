@@ -17,6 +17,13 @@ def get_cas_property(html_page, search_str):
     
     return ""
 
+# strip unwanted characters to make property search easier (without using specialized libraries)
+def html_cleansing(html_page):
+    clean_html = html_page.replace("\\n","").replace("\\r","").replace("\\t","").replace("b\'","").replace("\'","").replace("&#xb0;","").replace("&nbsp;"," ")
+    clean_html = re.sub(" +", " ", clean_html).replace("> ",">").replace(" <","<")
+
+    return clean_html
+
 @hook
 def agent_prompt_prefix(cat):
 
@@ -35,6 +42,12 @@ def cas_properties(cas, cat):
             'property_value': '',
             'property_search_string': '>Log Pow</dt><dd>',
             'property_search_string_2': '>Log Kow (Log Pow)</dt><dd>'
+        },
+        {
+            'property_name': 'Flash point',
+            'property_value': '',
+            'property_search_string': '>Flash point</dt><dd>',
+            'property_search_string_2': '>Flash point at 101 325 Pa</dt><dd>'
         },
         {
             'property_name': 'Vapour pressure',
@@ -70,6 +83,16 @@ def cas_properties(cas, cat):
 
     html = str(r.content)
 
+    search_str = "https://echa.europa.eu/en/substance-information/-/substanceinfo/"
+    start = html.find(search_str)
+    if start > 0:
+        start = html.find(">", start + 1)
+
+        if start > 0:
+            finish = html.find("<", start + 1)
+
+            cas_name = html_cleansing(html[start + 1: finish])
+
     # Is there a brief profile (detail page containing chemical properties)?
     search_str = "https://echa.europa.eu/en/brief-profile/-/briefprofile/"
 
@@ -84,11 +107,9 @@ def cas_properties(cas, cat):
 
             r = requests.get(f"{detail_page}", verify=False, cookies = {'CONSENT' : 'YES+'})
 
-            # strip unwanted caracters to make property search easier (without using specialized libraries)
-            html = str(r.content).replace("\\n","").replace("\\r","").replace("\\t","").replace("b\'","").replace("\'","").replace("&#xb0;","").replace("&nbsp;"," ")
-            html = re.sub(" +", " ", html).replace("> ",">").replace(" <","<")
+            html = html_cleansing(str(r.content))
 
-            results = f"<a href='{search_str}{doc}'>{cas}</a>"
+            results = f"<a href='{search_str}{doc}'>{cas}</a>\nName: {cas_name}"
 
             for property in properties:
                 property['property_value'] = get_cas_property(html, property['property_search_string'])
