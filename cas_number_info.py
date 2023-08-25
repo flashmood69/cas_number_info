@@ -1,6 +1,6 @@
-from cat.mad_hatter.decorators import tool, hook
 import re
 import requests
+from cat.mad_hatter.decorators import tool, hook
 
 # disable warnings
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
@@ -26,7 +26,6 @@ def html_cleansing(html_page):
 
 @hook
 def agent_prompt_prefix(cat):
-
     prefix = """You are Chem, an expert on chemical compounds.
 """
 
@@ -36,7 +35,7 @@ def agent_prompt_prefix(cat):
 def cas_properties(cas, cat):
     """Replies to "CAS number". Input is the CAS number of the chemical."""
 
-    properties = [
+    wanted_properties = [
         {
             'property_name': 'Log Pow',
             'property_value': '',
@@ -79,11 +78,12 @@ def cas_properties(cas, cat):
     }
 
     # send the request suppressing certificate warning and giving consent to GDPR
-    r = requests.post(f"{url}", form_data, verify=False, cookies = {'CONSENT' : 'YES+'})
+    req = requests.post(f"{url}", form_data, verify=False, cookies = {'CONSENT' : 'YES+'})
 
-    html = str(r.content)
+    html = str(req.content)
 
     # Search for the chemical name
+    cas_name = ""
     search_str = "https://echa.europa.eu/en/substance-information/-/substanceinfo/"
 
     start = html.find(search_str)
@@ -107,18 +107,18 @@ def cas_properties(cas, cat):
 
             detail_page = html[start: finish]
 
-            r = requests.get(f"{detail_page}", verify=False, cookies = {'CONSENT' : 'YES+'})
+            req = requests.get(f"{detail_page}", verify=False, cookies = {'CONSENT' : 'YES+'})
 
-            html = html_cleansing(str(r.content))
+            html = html_cleansing(str(req.content))
 
             results = f"<a href='{search_str}{doc}' target='_blank'>{cas}</a>\nName: {cas_name}"
 
-            for property in properties:
-                property['property_value'] = get_cas_property(html, property['property_search_string'])
-                if property['property_value'] == "" and  property['property_search_string_2'] != "":
-                    property['property_value'] = get_cas_property(html, property['property_search_string_2'])
+            for cas_property in wanted_properties:
+                cas_property['property_value'] = get_cas_property(html, cas_property['property_search_string'])
+                if cas_property['property_value'] == "" and cas_property['property_search_string_2'] != "":
+                    cas_property['property_value'] = get_cas_property(html, cas_property['property_search_string_2'])
 
-                results += f"\n{property['property_name']}: {property['property_value']}"
+                results += f"\n{cas_property['property_name']}: {cas_property['property_value']}"
 
         return results
 

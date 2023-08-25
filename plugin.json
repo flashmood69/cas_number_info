@@ -1,7 +1,7 @@
 {
     "name": "Cas Number Info",
-    "version": "0.0.4",
-    "description": "Get chemical properties from a reliable source. Example: CAS nuber 78-70-6",
+    "version": "0.0.5",
+    "description": "Get chemical properties from a reliable source. Example: CAS number 78-70-6",
     "author_name": "flashmood69 AKA miken175",
     "author_url": "",
     "plugin_url": "https://github.com/flashmood69/cas_number_info.git",
